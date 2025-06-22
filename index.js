@@ -4,7 +4,7 @@ dotenv.config({ path: "./.env" });
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import router from './router/router.js';
+import router from './src/router/router.js';
 import connectDB from "./src/db/index.js";
 
 const app = express();
