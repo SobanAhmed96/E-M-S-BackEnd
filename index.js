@@ -1,19 +1,41 @@
-import app from "./src/app.js";
-import connectDB from "./src/db/index.js";
 import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 
-dotenv.config({
-    path: "./.env"
-})
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import router from './router/router.js';
+import connectDB from "./src/db/index.js";
+
+const app = express();
+
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  })
+);
+
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+app.use('/api/v1', router);
+
+app.get('/', (req, res) => {
+  res.send('Welcome to E-M-S');
+});
 
 const Port = process.env.PORT || 5000;
 
 connectDB()
-.then(() =>{
-   app.listen(Port, () => {
-      console.log(`Server is Listening on PORT http://localhost:${Port}`);
-   })
-})
-.catch(() => {
-    console.log(`DB Error ${console.error()}`);
-});
+  .then(() => {
+    app.listen(Port, () => {
+      console.log(`Server is listening on http://localhost:${Port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('DB Connection Error:', err);
+  });
